@@ -11,8 +11,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -31,9 +33,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 
-public class MapsFragment extends Fragment implements OnMapReadyCallback , GoogleApiClient.ConnectionCallbacks{
+public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks {
 
-    private final String TAG="MapsFragment";
+    private final String TAG = "MapsFragment";
+    SupportMapFragment mapFragment;
     private Context mContext;
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -42,6 +45,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback , Googl
     LocationRequest mLocationRequest;
     FusedLocationProviderClient mFusedLocationProviderClient;
 
+    private ActivityCallback mActivityCallback;
+
+    private TextView dropBlock;
+    private int dropBlockHeight;
 
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -59,33 +66,48 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback , Googl
         }
     };
 
-    public static MapsFragment newInstance(){
-        MapsFragment mapsFragment=new MapsFragment();
+    public static MapsFragment newInstance() {
+        MapsFragment mapsFragment = new MapsFragment();
         return mapsFragment;
     }
 
     @Override
     public void onAttach(Context context) {
-        Log.d(TAG,"onAttach");
+        Log.d(TAG, "onAttach");
         super.onAttach(context);
-        mContext=context;
+        mContext = context;
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d(TAG,"onCreateView");
-        View contentView=inflater.inflate(R.layout.activity_maps,null);
-        SupportMapFragment mapFragment =(SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        Log.d(TAG, "onCreateView");
+        View contentView = inflater.inflate(R.layout.activity_maps, null);
+        initLoyout(contentView);
 
-
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return contentView;
     }
 
+    private void initLoyout(View contentView) {
+        dropBlock = contentView.findViewById(R.id.dropBlock);
+        mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
+        dropBlock.post(new Runnable() {
+            @Override
+            public void run() {
+                dropBlockHeight=dropBlock.getMeasuredHeight();
+                returnInformation();
+            }
+        });
+
+    }
+
+    public void setActivityCallback(ActivityCallback activityCallback){
+        mActivityCallback=activityCallback;
+    }
     protected synchronized void buildGoogleApiClient() {
-        Log.d(TAG,"buildGoogleApiClient");
+        Log.d(TAG, "buildGoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(mContext).addConnectionCallbacks(this).addApi(LocationServices.API).build();
         //callback onConnected();
         mGoogleApiClient.connect();
@@ -94,6 +116,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback , Googl
     private void moveMap(LatLng place) {
         CameraPosition cameraPosition = new CameraPosition.Builder().target(place).zoom(17).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+    private void returnInformation(){
+        mActivityCallback.onDropDownHeight(dropBlockHeight);
     }
 
     /**
@@ -107,7 +133,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback , Googl
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.d(TAG,"onMapReady");
+        Log.d(TAG, "onMapReady");
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
@@ -117,7 +143,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback , Googl
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.d(TAG,"onConnected");
+        Log.d(TAG, "onConnected");
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(2000);
         mLocationRequest.setFastestInterval(500);
@@ -135,5 +161,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback , Googl
     @Override
     public void onConnectionSuspended(int i) {
 
+    }
+
+    interface ActivityCallback{
+        void onDropDownHeight(int dropDownHeight);
     }
 }
