@@ -12,7 +12,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
-import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -41,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.Acti
                     .add(R.id.mapContainer, mapsFragment, "map")
                     .commit();
         }
+
+        testFirebase();
     }
 
     private void initLayout() {
@@ -124,8 +131,45 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.Acti
     }
 
 
+    private void testFirebase(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("audio");
+
+        VoiceGhostInfo voiceGhostInfo=new VoiceGhostInfo();
+        voiceGhostInfo.creator="Mark2";
+        voiceGhostInfo.recipient="Andy2";
+        voiceGhostInfo.location="25.0423922-121.5649822";
+        voiceGhostInfo.distanceRange="100";
+        voiceGhostInfo.createAt="20181217-1526";
+        voiceGhostInfo.expireAt="00-00-02-00-00";
+        voiceGhostInfo.readOnce="true";
+        voiceGhostInfo.title="Hello world";
+
+        myRef.child("1").setValue(voiceGhostInfo);
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+
+                VoiceGhostInfo value = dataSnapshot.child("1").getValue(VoiceGhostInfo.class);
+                Log.d(TAG,value.print());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+    }
     @Override
     public void onDropDownHeight(int dropDownHeight) {
         mDropDownHeight = dropDownHeight;
     }
+
+
 }
+

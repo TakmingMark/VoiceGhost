@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "513397113093",
+    "firebase_url": "https://voiceghost-38502.firebaseio.com",
+    "project_id": "voiceghost-38502",
+    "storage_bucket": "voiceghost-38502.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:513397113093:android:e210beba1b5caacd",
+        "android_client_info": {
+          "package_name": "com.example.markwang.voiceghost"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "513397113093-4pi6uskghmdpcsrhbm52100j59rte53j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.markwang.voiceghost",
+            "certificate_hash": "476072779b7fc19605aa6e594bf3b34abad8b0b4"
+          }
+        },
+        {
+          "client_id": "513397113093-pffad0bhom2atl6ah9cujhpcuhuis086.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMYAlN25U7KQrQrP8DWvsMB7UH4k2QtgQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "513397113093-pffad0bhom2atl6ah9cujhpcuhuis086.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
