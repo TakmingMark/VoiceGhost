@@ -36,18 +36,18 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.Acti
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        requestPermissions();
-        initLayout();
-        initObject();
-        initListener();
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.mapContainer, mapsFragment, "map")
-                    .commit();
-        }
-
-        testFirebase();
+        setContentView(R.layout.test);
+//        requestPermissions();
+//        initLayout();
+//        initObject();
+//        initListener();
+//        if (savedInstanceState == null) {
+//            getSupportFragmentManager().beginTransaction()
+//                    .add(R.id.mapContainer, mapsFragment, "map")
+//                    .commit();
+//        }
+//
+//        testFirebase();
     }
 
     private void initLayout() {
@@ -89,16 +89,6 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.Acti
                             v.animate().setInterpolator(new AccelerateInterpolator()).translationY(0).setDuration(500);
 
                         }
-
-//                        float translationY = v.getTranslationY();
-//                        translationY -= deltaY;
-//
-//                        if (translationY < 0)
-//                            translationY = 0;
-//                        if (translationY > mainLayoutHeight - mDropDownHeight)
-//                            translationY = mainLayoutHeight - mDropDownHeight;
-
-//                        v.setTranslationY(translationY);
                         return true;
                 }
                 return true;
@@ -131,22 +121,23 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.Acti
     }
 
 
-    private void testFirebase(){
+    private void testFirebase() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("audio");
 
-        VoiceGhostInfo voiceGhostInfo=new VoiceGhostInfo();
-        voiceGhostInfo.creator="Mark2";
-        voiceGhostInfo.recipient="Andy2";
-        voiceGhostInfo.location="25.0423922-121.5649822";
-        voiceGhostInfo.distanceRange="100";
-        voiceGhostInfo.createAt="20181217-1526";
-        voiceGhostInfo.expireAt="00-00-02-00-00";
-        voiceGhostInfo.readOnce="true";
-        voiceGhostInfo.title="Hello world";
-
+        VoiceGhostInfo voiceGhostInfo = new VoiceGhostInfo();
+        voiceGhostInfo.creator = "Mark2";
+        voiceGhostInfo.recipient = "Andy2";
+        voiceGhostInfo.location = "25.0423922-121.5649822";
+        voiceGhostInfo.distanceRange = "100";
+        voiceGhostInfo.createAt = "20181217-1526";
+        voiceGhostInfo.expireAt = "00-00-02-00-00";
+        voiceGhostInfo.readOnce = "true";
+        voiceGhostInfo.title = "Hello world";
         myRef.child("1").setValue(voiceGhostInfo);
 
+
+        //read from firebase when firebase data change
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -154,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.Acti
                 // whenever data at this location is updated.
 
                 VoiceGhostInfo value = dataSnapshot.child("1").getValue(VoiceGhostInfo.class);
-                Log.d(TAG,value.print());
+                Log.d(TAG, value.print());
             }
 
             @Override
@@ -165,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.Acti
         });
 
     }
+
     @Override
     public void onDropDownHeight(int dropDownHeight) {
         mDropDownHeight = dropDownHeight;
