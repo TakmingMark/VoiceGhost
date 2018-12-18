@@ -18,6 +18,7 @@ public class CustomFragment extends Fragment {
     private EditText customLongitude;
     private EditText customTriggerRange;
     private EditText customRecipient;
+    private EditText customTitle;
     private Button recordAudio;
     private Button playAudio;
     private Button updateData;
@@ -36,6 +37,7 @@ public class CustomFragment extends Fragment {
         customLongitude.setText("456");
         customTriggerRange.setText("10");
         customRecipient.setText("Andy");
+        customTitle.setText("How are you?");
     }
 
     @Override
@@ -51,9 +53,10 @@ public class CustomFragment extends Fragment {
         View contentView = inflater.inflate(R.layout.custom, null);
         customName = contentView.findViewById(R.id.customNameET);
         customLattude = contentView.findViewById(R.id.customLattudeET);
-        customLongitude = contentView.findViewById(R.id.customLattudeET);
+        customLongitude = contentView.findViewById(R.id.customLongitudeET);
         customTriggerRange = contentView.findViewById(R.id.customTriggerRangeET);
         customRecipient = contentView.findViewById(R.id.customRecipientET);
+        customTitle=contentView.findViewById(R.id.customTitleET);
         recordAudio = contentView.findViewById(R.id.recordAudioBT);
         playAudio = contentView.findViewById(R.id.playAudioBT);
         updateData = contentView.findViewById(R.id.updateDataBT);
