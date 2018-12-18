@@ -45,10 +45,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     LocationRequest mLocationRequest;
     FusedLocationProviderClient mFusedLocationProviderClient;
 
-    private ActivityCallback mActivityCallback;
-
-    private TextView dropBlock;
-    private int dropBlockHeight;
 
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -89,23 +85,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     private void initLoyout(View contentView) {
-        dropBlock = contentView.findViewById(R.id.dropBlock);
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        dropBlock.post(new Runnable() {
-            @Override
-            public void run() {
-                dropBlockHeight=dropBlock.getMeasuredHeight();
-                returnInformation();
-            }
-        });
-
     }
 
-    public void setActivityCallback(ActivityCallback activityCallback){
-        mActivityCallback=activityCallback;
-    }
+
     protected synchronized void buildGoogleApiClient() {
         Log.d(TAG, "buildGoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(mContext).addConnectionCallbacks(this).addApi(LocationServices.API).build();
@@ -118,9 +102,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
-    private void returnInformation(){
-        mActivityCallback.onDropDownHeight(dropBlockHeight);
-    }
 
     /**
      * Manipulates the map once available.
@@ -163,7 +144,4 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     }
 
-    interface ActivityCallback{
-        void onDropDownHeight(int dropDownHeight);
-    }
 }

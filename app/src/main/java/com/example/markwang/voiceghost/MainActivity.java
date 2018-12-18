@@ -3,11 +3,16 @@ package com.example.markwang.voiceghost;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -21,11 +26,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements MapsFragment.ActivityCallback {
+public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
-    MapsFragment mapsFragment;
-    ConstraintLayout mainLayout;
-    FrameLayout mapContainer;
+    MapsFragment mMapsFragment;
+    CustomFragment mCustomFragment;
+    UserFragment mUserFragment;
+    FrameLayout mainContainer;
+    BottomNavigationView mBottomNavigationView;
 
 
     int mainLayoutHeight;
@@ -36,11 +43,13 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.Acti
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.test);
-//        requestPermissions();
-//        initLayout();
-//        initObject();
-//        initListener();
+        setContentView(R.layout.main);
+
+        requestPermissions();
+        initLayout();
+        initObject();
+        initMainContainer();
+        initListener();
 //        if (savedInstanceState == null) {
 //            getSupportFragmentManager().beginTransaction()
 //                    .add(R.id.mapContainer, mapsFragment, "map")
@@ -51,47 +60,46 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.Acti
     }
 
     private void initLayout() {
-        mapContainer = findViewById(R.id.mapContainer);
-        mainLayout = findViewById(R.id.mainLayout);
-
-
-        //在onCreate並不能保證onLayout已經執行，所以要用post丟到隊伍列尾確保已經完成onLayout
-        mainLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mainLayoutHeight = mainLayout.getHeight();
-            }
-        });
-        mainLayoutHeight = mainLayout.getMeasuredHeight();
+        mainContainer = findViewById(R.id.mainContainer);
+        mBottomNavigationView = findViewById(R.id.bottomNavigationView);
     }
 
     private void initObject() {
-        mapsFragment = MapsFragment.newInstance();
-        mapsFragment.setActivityCallback(this);
+        mMapsFragment = MapsFragment.newInstance();
+        mCustomFragment = CustomFragment.newInstance("test");
+        mUserFragment=UserFragment.newInstance("test");
+    }
+
+    private void initMainContainer() {
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.mainContainer, mCustomFragment, "custom")
+                .commit();
+
     }
 
     private void initListener() {
-        mapContainer.setOnTouchListener(new View.OnTouchListener() {
+        mBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        mLastPosY = event.getY();
-                        return true;
-                    case MotionEvent.ACTION_MOVE:
-                        double currentPosition = event.getY();
-                        double deltaY = mLastPosY - currentPosition;
-
-                        if (deltaY < 0) {
-                            v.animate().setInterpolator(new AccelerateInterpolator()).translationY(mainLayoutHeight - mDropDownHeight).setDuration(500);
-                        } else if (deltaY > 0) {
-                            v.animate().setInterpolator(new AccelerateInterpolator()).translationY(0).setDuration(500);
-
-                        }
-                        return true;
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.custom:
+                        getSupportFragmentManager().beginTransaction().
+                                replace(R.id.mainContainer, mCustomFragment, "custom")
+                                .commit();
+                        break;
+                    case R.id.user:
+                        getSupportFragmentManager().beginTransaction().
+                                replace(R.id.mainContainer, mUserFragment, "custom")
+                                .commit();
+                        break;
+                    case R.id.map:
+                        getSupportFragmentManager().beginTransaction().
+                                replace(R.id.mainContainer, mMapsFragment, "map")
+                                .commit();
+                        break;
                 }
-                return true;
+
+                return false;
             }
         });
     }
@@ -121,46 +129,43 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.Acti
     }
 
 
-    private void testFirebase() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("audio");
 
-        VoiceGhostInfo voiceGhostInfo = new VoiceGhostInfo();
-        voiceGhostInfo.creator = "Mark2";
-        voiceGhostInfo.recipient = "Andy2";
-        voiceGhostInfo.location = "25.0423922-121.5649822";
-        voiceGhostInfo.distanceRange = "100";
-        voiceGhostInfo.createAt = "20181217-1526";
-        voiceGhostInfo.expireAt = "00-00-02-00-00";
-        voiceGhostInfo.readOnce = "true";
-        voiceGhostInfo.title = "Hello world";
-        myRef.child("1").setValue(voiceGhostInfo);
-
-
-        //read from firebase when firebase data change
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-
-                VoiceGhostInfo value = dataSnapshot.child("1").getValue(VoiceGhostInfo.class);
-                Log.d(TAG, value.print());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-
-    }
-
-    @Override
-    public void onDropDownHeight(int dropDownHeight) {
-        mDropDownHeight = dropDownHeight;
-    }
+//    private void testFirebase() {
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("audio");
+//
+//        VoiceGhostInfo voiceGhostInfo = new VoiceGhostInfo();
+//        voiceGhostInfo.creator = "Mark2";
+//        voiceGhostInfo.recipient = "Andy2";
+//        voiceGhostInfo.location = "25.0423922-121.5649822";
+//        voiceGhostInfo.distanceRange = "100";
+//        voiceGhostInfo.createAt = "20181217-1526";
+//        voiceGhostInfo.expireAt = "00-00-02-00-00";
+//        voiceGhostInfo.readOnce = "true";
+//        voiceGhostInfo.title = "Hello world";
+//        myRef.child("1").setValue(voiceGhostInfo);
+//
+//
+//        //read from firebase when firebase data change
+//        myRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // This method is called once with the initial value and again
+//                // whenever data at this location is updated.
+//
+//                VoiceGhostInfo value = dataSnapshot.child("1").getValue(VoiceGhostInfo.class);
+//                Log.d(TAG, value.print());
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//                Log.w(TAG, "Failed to read value.", error.toException());
+//            }
+//        });
+//
+//    }
+//
 
 
 }

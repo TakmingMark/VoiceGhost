@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="User"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/userLattude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lattude:"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/userLattudeET"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="8"
+            android:hint="Lattude"
+            android:inputType="numberDecimal" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/userLongitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Longitude:"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/userLongitudeET"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="8"
+            android:hint="Longitude"
+            android:inputType="numberDecimal" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/calculateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="calculate user position:"
+            android:textSize="16sp" />
+
+
+        <Button
+            android:id="@+id/calculateBT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="calculate" />
+
+    </LinearLayout>
+</LinearLayout>

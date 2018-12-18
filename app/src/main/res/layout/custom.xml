@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:text="Name:"
             android:textSize="16sp" />
+
         <EditText
             android:id="@+id/customNameET"
             android:layout_width="wrap_content"
@@ -89,6 +90,7 @@
             android:layout_height="wrap_content"
             android:text="Distance range:"
             android:textSize="16sp" />
+
         <EditText
             android:id="@+id/customDistanceRangeET"
             android:layout_width="wrap_content"
@@ -96,6 +98,7 @@
             android:ems="8"
             android:hint="DistanceRange" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -107,6 +110,7 @@
             android:layout_height="wrap_content"
             android:text="Recipient:"
             android:textSize="16sp" />
+
         <EditText
             android:id="@+id/customRecipientET"
             android:layout_width="wrap_content"
@@ -114,6 +118,7 @@
             android:ems="8"
             android:hint="Recipient" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -125,6 +130,7 @@
             android:layout_height="wrap_content"
             android:text="Title:"
             android:textSize="16sp" />
+
         <EditText
             android:id="@+id/customTitleET"
             android:layout_width="wrap_content"
@@ -132,65 +138,6 @@
             android:ems="8"
             android:hint="Title" />
     </LinearLayout>
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="User"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/userLattude"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Lattude:"
-            android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/userLattudeET"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="8"
-            android:hint="Lattude"
-            android:inputType="numberDecimal" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/userLongitude"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:text="Longitude:"
-            android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/userLongitudeET"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="8"
-            android:hint="Longitude"
-            android:inputType="numberDecimal" />
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Info and Button"
-        android:textSize="18sp"
-        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -212,20 +159,41 @@
             android:textSize="16sp" />
 
         <Button
-            android:id="@+id/recordBT"
+            android:id="@+id/recordSoundBT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="record" />
 
         <Button
-            android:id="@+id/playBT"
+            android:id="@+id/playSoundBT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="play" />
     </LinearLayout>
-    <android.support.design.widget.BottomNavigationView
-        android:layout_width="match_parent"
+
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
-        app:menu="@menu/menu"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/recordData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Record data state:"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/RecordState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="false"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/recordDataBT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="recordData" />
+    </LinearLayout>
 </LinearLayout>
