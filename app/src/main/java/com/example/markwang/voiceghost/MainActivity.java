@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 
@@ -34,10 +36,9 @@ public class MainActivity extends AppCompatActivity {
     FrameLayout mainContainer;
     BottomNavigationView mBottomNavigationView;
 
-
     int mainLayoutHeight;
-    int mDropDownHeight;
-
+    int mainContainerHeight;
+    int mBottomNavigationViewHeight;
     float mLastPosY = 0;
 
     @Override
@@ -50,60 +51,79 @@ public class MainActivity extends AppCompatActivity {
         initObject();
         initMainContainer();
         initListener();
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.mapContainer, mapsFragment, "map")
-//                    .commit();
-//        }
-//
+
 //        testFirebase();
     }
 
     private void initLayout() {
         mainContainer = findViewById(R.id.mainContainer);
         mBottomNavigationView = findViewById(R.id.bottomNavigationView);
+
+        mainContainer.post(new Runnable() {
+            @Override
+            public void run() {
+                mainContainerHeight = mainContainer.getHeight();
+            }
+        });
+
+        mBottomNavigationView.post(new Runnable() {
+            @Override
+            public void run() {
+                mBottomNavigationViewHeight = mBottomNavigationView.getHeight();
+                mainLayoutHeight = mainContainerHeight - mBottomNavigationViewHeight;
+                ViewGroup.LayoutParams params = mainContainer.getLayoutParams();
+                params.height = mainLayoutHeight;
+                params = null;
+            }
+        });
+
     }
 
     private void initObject() {
         mMapsFragment = MapsFragment.newInstance();
         mCustomFragment = CustomFragment.newInstance("test");
-        mUserFragment=UserFragment.newInstance("test");
+        mUserFragment = UserFragment.newInstance("test");
     }
 
     private void initMainContainer() {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.mainContainer, mCustomFragment, "custom")
                 .commit();
-
     }
 
     private void initListener() {
         mBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
                 switch (menuItem.getItemId()) {
                     case R.id.custom:
-                        getSupportFragmentManager().beginTransaction().
-                                replace(R.id.mainContainer, mCustomFragment, "custom")
-                                .commit();
+                        displayFragment(mCustomFragment,mUserFragment,mMapsFragment,"custom");
                         break;
                     case R.id.user:
-                        getSupportFragmentManager().beginTransaction().
-                                replace(R.id.mainContainer, mUserFragment, "custom")
-                                .commit();
+                        displayFragment(mUserFragment,mCustomFragment,mMapsFragment,"user");
                         break;
                     case R.id.map:
-                        getSupportFragmentManager().beginTransaction().
-                                replace(R.id.mainContainer, mMapsFragment, "map")
-                                .commit();
+                        displayFragment(mMapsFragment,mUserFragment,mCustomFragment,"map");
                         break;
                 }
-
                 return false;
             }
         });
     }
 
+    private void displayFragment(Fragment showFragment,Fragment hideFragment1,Fragment hideFragment2,String tag){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if(showFragment.isAdded()){
+            fragmentTransaction.show(showFragment);
+        }else{
+            fragmentTransaction.add(R.id.mainContainer, showFragment, tag);
+        }
+        fragmentTransaction.hide(hideFragment1);
+        fragmentTransaction.hide(hideFragment2);
+
+        fragmentTransaction.commit();
+    }
     private void requestPermissions() {
         int fineLocationPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         int coarseLocationPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -129,20 +149,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
 //    private void testFirebase() {
 //        FirebaseDatabase database = FirebaseDatabase.getInstance();
 //        DatabaseReference myRef = database.getReference("audio");
 //
 //        VoiceGhostInfo voiceGhostInfo = new VoiceGhostInfo();
-//        voiceGhostInfo.creator = "Mark2";
-//        voiceGhostInfo.recipient = "Andy2";
+//        voiceGhostInfo.mCreator = "Mark2";
+//        voiceGhostInfo.mRecipient = "Andy2";
 //        voiceGhostInfo.location = "25.0423922-121.5649822";
-//        voiceGhostInfo.distanceRange = "100";
+//        voiceGhostInfo.mTriggerRange = "100";
 //        voiceGhostInfo.createAt = "20181217-1526";
 //        voiceGhostInfo.expireAt = "00-00-02-00-00";
 //        voiceGhostInfo.readOnce = "true";
-//        voiceGhostInfo.title = "Hello world";
+//        voiceGhostInfo.mTitle = "Hello world";
 //        myRef.child("1").setValue(voiceGhostInfo);
 //
 //

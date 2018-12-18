@@ -1,37 +1,38 @@
 package com.example.markwang.voiceghost;
 
-import android.util.Log;
-
 public class VoiceGhostInfo {
     private final String TAG="VoiceGhostInfo";
     public String creator;
     public String recipient;
-    public String location;
-    public String distanceRange;
+    public String lattude;
+    public String longitude;
+    public String triggerRange;
     public String createAt;
     public String expireAt;
     public String readOnce;
     public String title;
+    public String voiceAddress;
 
     VoiceGhostInfo(){
 
     }
 
-    public VoiceGhostInfo(String creator, String recipient, String location, String distanceRange, String createAt, String expireAt, String readOnce, String title) {
+    public VoiceGhostInfo(String creator, String recipient, String lattude, String longitude, String triggerRange, String createAt, String expireAt, String readOnce, String title, String voiceAddress) {
         this.creator = creator;
         this.recipient = recipient;
-        this.location = location;
-        this.distanceRange = distanceRange;
+        this.lattude = lattude;
+        this.longitude = longitude;
+        this.triggerRange = triggerRange;
         this.createAt = createAt;
         this.expireAt = expireAt;
         this.readOnce = readOnce;
         this.title = title;
+        this.voiceAddress = voiceAddress;
     }
 
-
     public String print(){
-        String log="creator:"+creator+"recipient:"+recipient+"location:"+location+
-                "distanceRange:"+distanceRange+"createAt:"+createAt+"expireAt:"+expireAt+"readOnce:"+readOnce+"title:"+title;
+        String log="mCreator:"+creator+"mRecipient:"+recipient+"mLattude:"+lattude+"mLongitude"+longitude+
+                "mTriggerRange:"+ triggerRange +"createAt:"+createAt+"expireAt:"+expireAt+"readOnce:"+readOnce+"mTitle:"+title +"voiceAddress"+voiceAddress;
         return  log;
     }
 
