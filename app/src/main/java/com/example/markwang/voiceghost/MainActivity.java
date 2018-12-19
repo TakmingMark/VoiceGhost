@@ -2,6 +2,7 @@ package com.example.markwang.voiceghost;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -10,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -17,7 +19,13 @@ import android.widget.FrameLayout;
 import com.example.markwang.voiceghost.fragment.CustomFragment;
 import com.example.markwang.voiceghost.fragment.MapsFragment;
 import com.example.markwang.voiceghost.fragment.UserFragment;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         initObject();
         initFragment(savedInstanceState);
         initListener();
-
 //        testFirebase();
     }
 
@@ -158,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
+
 
 
     //    private void testFirebase() {

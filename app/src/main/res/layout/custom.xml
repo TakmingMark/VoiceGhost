@@ -198,4 +198,22 @@
             android:textAllCaps="false"
             android:text="Update" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/clearEditTextBT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="ClearText" />
+        <Button
+            android:id="@+id/clearStateBT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="clearState" />
+    </LinearLayout>
 </LinearLayout>

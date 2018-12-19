@@ -10,8 +10,7 @@ import java.io.IOException;
 public class SoundRecord {
     private final String TAG="SoundRecord";
     private Context mContext;
-    private String mFilePath = null;
-    private String mFileName=null;
+    private String mFilePathAndName = null;
     private MediaRecorder mMediaRecorder;
 
 
@@ -22,12 +21,10 @@ public class SoundRecord {
 
     private void initilized(){
 
-        mFilePath=mContext.getExternalCacheDir().getAbsolutePath();
-        Log.d(TAG,"mFilePath:"+mFilePath);
     }
 
-    public void setFileName(String fileName){
-        mFileName=fileName;
+    public void setFilePathAndName(String filePathAndName){
+        mFilePathAndName=filePathAndName;
     }
 
     public void onRecord(boolean isStart) {
@@ -38,10 +35,10 @@ public class SoundRecord {
     }
 
     private void startRecording(){
-        mMediaRecorder=new MediaRecorder();
+        mMediaRecorder=new MediaRecorder();//maybe move to initlized
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mMediaRecorder.setOutputFile(mFilePath+"/"+mFileName);
+        mMediaRecorder.setOutputFile(mFilePathAndName);
         mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
         try {

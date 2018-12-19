@@ -9,8 +9,8 @@ import java.io.IOException;
 public class SoundPlayer {
     private final String TAG="SoundPlayer";
     private Context mContext;
-    private String mFilePath = null;
-    private String mFileName=null;
+    private String mFilePathAndName = null;
+
     private MediaPlayer mMediaPlayer;
     private SoundPlayerCallback mSoundPlayerCallback;
 
@@ -21,7 +21,6 @@ public class SoundPlayer {
     }
 
     private void initilized(){
-        mFilePath=mContext.getExternalCacheDir().getAbsolutePath();
         mMediaPlayer=new MediaPlayer();
     }
 
@@ -35,8 +34,8 @@ public class SoundPlayer {
         });
     }
 
-    public void setFileName(String fileName){
-        mFileName=fileName;
+    public void setFilePathAndName(String filePathAndName){
+        mFilePathAndName=filePathAndName;
     }
 
     public void setSoundPlayerCallback(SoundPlayerCallback soundPlayerCallback){
@@ -53,7 +52,7 @@ public class SoundPlayer {
 
     private void startPlaying(){
         try{
-            mMediaPlayer.setDataSource(mFilePath+"/"+mFileName);
+            mMediaPlayer.setDataSource(mFilePathAndName);
             mMediaPlayer.prepare();
             mMediaPlayer.start();
         }catch (IOException e){
