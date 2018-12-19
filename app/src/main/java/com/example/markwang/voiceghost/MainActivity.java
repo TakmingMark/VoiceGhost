@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         requestPermissions();
         initLayout();
         initObject();
-        initMainContainer();
+        initFragment(savedInstanceState);
         initListener();
 
 //        testFirebase();
@@ -72,15 +72,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initObject() {
-        mMapsFragment = MapsFragment.newInstance();
         mCustomFragment = CustomFragment.newInstance("test");
         mUserFragment = UserFragment.newInstance("test");
+        mMapsFragment = MapsFragment.newInstance();
     }
 
-    private void initMainContainer() {
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.mainContainer, mCustomFragment, "custom")
-                .commit();
+    private void initFragment(Bundle savedInstanceState) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+        if(savedInstanceState!=null){
+            mCustomFragment=(CustomFragment)getSupportFragmentManager().findFragmentByTag("custom");
+            mUserFragment=(UserFragment)getSupportFragmentManager().findFragmentByTag("user");
+            mMapsFragment=(MapsFragment)getSupportFragmentManager().findFragmentByTag("map");
+        }else{
+            fragmentTransaction
+                    .add(R.id.mainContainer, mCustomFragment, "custom");
+            fragmentTransaction
+                    .add(R.id.mainContainer, mUserFragment, "user");
+            fragmentTransaction
+                    .add(R.id.mainContainer, mMapsFragment, "map");
+        }
+        fragmentTransaction.show(mCustomFragment);
+        fragmentTransaction.hide(mUserFragment);
+        fragmentTransaction.hide(mMapsFragment);
+        fragmentTransaction.commit();
     }
 
     private void initListener() {
@@ -90,13 +105,13 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (menuItem.getItemId()) {
                     case R.id.custom:
-                        displayFragment(mCustomFragment,mUserFragment,mMapsFragment,"custom");
+                        displayFragment(mCustomFragment, mUserFragment, mMapsFragment);
                         break;
                     case R.id.user:
-                        displayFragment(mUserFragment,mCustomFragment,mMapsFragment,"user");
+                        displayFragment(mUserFragment, mCustomFragment, mMapsFragment);
                         break;
                     case R.id.map:
-                        displayFragment(mMapsFragment,mUserFragment,mCustomFragment,"map");
+                        displayFragment(mMapsFragment, mUserFragment, mCustomFragment);
                         break;
                 }
                 return false;
@@ -104,22 +119,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void displayFragment(Fragment showFragment,Fragment hideFragment1,Fragment hideFragment2,String tag){
+    private void displayFragment(Fragment showFragment, Fragment hideFragment1, Fragment hideFragment2) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if(showFragment.isAdded()){
-            fragmentTransaction.show(showFragment);
-        }else{
-            fragmentTransaction.add(R.id.mainContainer, showFragment, tag);
-        }
-        if(hideFragment1.isAdded()){
-            fragmentTransaction.hide(hideFragment1);
-        }
-        if(hideFragment2.isAdded()){
-            fragmentTransaction.hide(hideFragment2);
-        }
-
+        fragmentTransaction.show(showFragment);
+        fragmentTransaction.hide(hideFragment1);
+        fragmentTransaction.hide(hideFragment2);
         fragmentTransaction.commit();
     }
+
     private void requestPermissions() {
         int fineLocationPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         int coarseLocationPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -147,8 +154,13 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, permissions.toArray(new String[]{}), 1);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
-//    private void testFirebase() {
+
+    //    private void testFirebase() {
 //        FirebaseDatabase database = FirebaseDatabase.getInstance();
 //        DatabaseReference myRef = database.getReference("audio");
 //

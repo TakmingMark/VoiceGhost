@@ -60,7 +60,7 @@ public class UserFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManger);
 
         ArrayList<VoiceGhostInfo> dataSet=new ArrayList<>();
-        for(int i=0;i<100;i++){
+        for(int i=0;i<0;i++){
             VoiceGhostInfo voiceGhostInfo=new VoiceGhostInfo();
             voiceGhostInfo.creator="Mark";
             voiceGhostInfo.lattude="123232222222222223222222222222322222222222222222222222";
