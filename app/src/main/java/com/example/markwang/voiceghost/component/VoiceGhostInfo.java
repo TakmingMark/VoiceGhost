@@ -1,4 +1,4 @@
-package com.example.markwang.voiceghost;
+package com.example.markwang.voiceghost.component;
 
 public class VoiceGhostInfo {
     private final String TAG="VoiceGhostInfo";
@@ -13,7 +13,7 @@ public class VoiceGhostInfo {
     public String title;
     public String voiceAddress;
 
-    VoiceGhostInfo(){
+    public VoiceGhostInfo(){
 
     }
 

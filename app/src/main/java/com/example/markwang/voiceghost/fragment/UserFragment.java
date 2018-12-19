@@ -1,4 +1,4 @@
-package com.example.markwang.voiceghost;
+package com.example.markwang.voiceghost.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,6 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.markwang.voiceghost.fragment.adapter.LocationAdapter;
+import com.example.markwang.voiceghost.R;
+import com.example.markwang.voiceghost.component.VoiceGhostInfo;
 
 import java.util.ArrayList;
 
