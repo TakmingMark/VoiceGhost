@@ -162,6 +162,7 @@
             android:id="@+id/recordAudioBT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAllCaps="false"
             android:text="record" />
 
         <Button
@@ -194,6 +195,7 @@
             android:id="@+id/updateDataBT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAllCaps="false"
             android:text="Update" />
     </LinearLayout>
 </LinearLayout>

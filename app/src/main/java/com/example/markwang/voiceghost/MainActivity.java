@@ -111,8 +111,12 @@ public class MainActivity extends AppCompatActivity {
         }else{
             fragmentTransaction.add(R.id.mainContainer, showFragment, tag);
         }
-        fragmentTransaction.hide(hideFragment1);
-        fragmentTransaction.hide(hideFragment2);
+        if(hideFragment1.isAdded()){
+            fragmentTransaction.hide(hideFragment1);
+        }
+        if(hideFragment2.isAdded()){
+            fragmentTransaction.hide(hideFragment2);
+        }
 
         fragmentTransaction.commit();
     }
@@ -122,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         int writeExternalStoragePermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int networkStatePermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE);
         int internetPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
+        int recordAudioRermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
 
         ArrayList<String> permissions = new ArrayList<>();
 
@@ -135,6 +140,8 @@ public class MainActivity extends AppCompatActivity {
             permissions.add(Manifest.permission.ACCESS_NETWORK_STATE);
         if (PackageManager.PERMISSION_GRANTED != internetPermissionCheck)
             permissions.add(Manifest.permission.INTERNET);
+        if (PackageManager.PERMISSION_GRANTED != recordAudioRermissionCheck)
+            permissions.add(Manifest.permission.RECORD_AUDIO);
 
         if (permissions.size() > 0)
             ActivityCompat.requestPermissions(this, permissions.toArray(new String[]{}), 1);

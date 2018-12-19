@@ -14,7 +14,7 @@ public class SoundPlayer {
     private MediaPlayer mMediaPlayer;
     private SoundPlayerCallback mSoundPlayerCallback;
 
-    SoundPlayer(Context context){
+    public SoundPlayer(Context context){
         mContext=context;
         initilized();
         initListener();
@@ -29,6 +29,7 @@ public class SoundPlayer {
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
+               stopPlaying();
                 mSoundPlayerCallback.playerCompletion();
             }
         });
@@ -61,7 +62,8 @@ public class SoundPlayer {
     }
 
     private void stopPlaying(){
-        mMediaPlayer.release();
+        mMediaPlayer.reset();
+
     }
 
     public void onDestory(){

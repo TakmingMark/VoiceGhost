@@ -15,13 +15,15 @@ public class SoundRecord {
     private MediaRecorder mMediaRecorder;
 
 
-    SoundRecord(Context context){
+    public SoundRecord(Context context){
         mContext=context;
         initilized();
     }
 
     private void initilized(){
+
         mFilePath=mContext.getExternalCacheDir().getAbsolutePath();
+        Log.d(TAG,"mFilePath:"+mFilePath);
     }
 
     public void setFileName(String fileName){
@@ -53,6 +55,7 @@ public class SoundRecord {
 
     private void stopRecording() {
         mMediaRecorder.stop();
+        mMediaRecorder.reset();
         mMediaRecorder.release();
         mMediaRecorder = null;
     }
