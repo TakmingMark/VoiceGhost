@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class CustomFragment extends Fragment implements SoundPlayer.SoundPlayerCallback,FirebaseManager.Callback{
+public class CustomFragment extends Fragment implements SoundPlayer.Callback,FirebaseManager.Callback{
     private final String TAG = "CustomFragment";
     private Context mContext;
     private EditText customName;
@@ -49,13 +49,15 @@ public class CustomFragment extends Fragment implements SoundPlayer.SoundPlayerC
     private boolean isPlaying = false;
 
     private String mFilePath;
-
     private String mFileName;
 
+//    If Android decides to recreate your Fragment later,
+//    it's going to call the no-argument constructor of your fragment.
+//    So overloading the constructor is not a solution.
     public static CustomFragment newInstance(String str) {
         CustomFragment customFragment = new CustomFragment();
         Bundle bundle = new Bundle();
-        bundle.putString("test", str);
+        bundle.putString("wantStore", str);
         customFragment.setArguments(bundle);
         return customFragment;
     }
@@ -80,8 +82,8 @@ public class CustomFragment extends Fragment implements SoundPlayer.SoundPlayerC
         mSimpleDateFormat = new SimpleDateFormat("yyyyMMdd-HHmm");
         mSoundRecord = new SoundRecord(mContext);
         mSoundPlayer = new SoundPlayer(mContext);
-        mSoundPlayer.setSoundPlayerCallback(this);
 
+        mSoundPlayer.setCallback(this);
         FirebaseManager.getInstance().setCallback(this);
         mFilePath = mContext.getExternalCacheDir().getAbsolutePath();
     }
@@ -176,7 +178,6 @@ public class CustomFragment extends Fragment implements SoundPlayer.SoundPlayerC
     @Override
     public void onAttach(Context context) {
         mContext = context;
-        //getArguments.getString(test);
         super.onAttach(context);
     }
 

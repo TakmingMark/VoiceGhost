@@ -18,9 +18,9 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.util.ArrayList;
 
-public class FirebaseManager {
+public class FirebaseManager extends BaseManager{
     private final String TAG="FirebaseManager";
-    private final static FirebaseManager mFirebaseManager = new FirebaseManager();
+    private static FirebaseManager mFirebaseManager = new FirebaseManager();
     FirebaseStorage mFirebaseStorage;
     StorageReference mStorageReference;
     private Callback mCallback;
@@ -85,6 +85,11 @@ public class FirebaseManager {
                 Log.d(TAG, "uploadTask is onSuccess");
             }
         });
+    }
+
+    @Override
+    public void onDestory() {
+        mFirebaseManager=null;
     }
 
     public interface Callback{

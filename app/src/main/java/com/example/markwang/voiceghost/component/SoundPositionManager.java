@@ -2,9 +2,9 @@ package com.example.markwang.voiceghost.component;
 
 import java.util.ArrayList;
 
-public class SoundPositionManager {
+public class SoundPositionManager extends BaseManager{
 
-    private final static SoundPositionManager mInstance = new SoundPositionManager();
+    private static SoundPositionManager mInstance = new SoundPositionManager();
 
     private  Callback mCallback;
     public static SoundPositionManager getInstance() {
@@ -33,6 +33,11 @@ public class SoundPositionManager {
 
     private void removeArrayListAll() {
         mVoiceGhostArrayList.clear();
+    }
+
+    @Override
+    public void onDestory() {
+        mInstance=null;
     }
 
     public interface Callback{

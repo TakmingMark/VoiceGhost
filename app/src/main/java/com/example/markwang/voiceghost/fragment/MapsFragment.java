@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -70,10 +69,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         }
     };
 
-    public static MapsFragment newInstance() {
+    public static MapsFragment newInstance(String str) {
         MapsFragment mapsFragment = new MapsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("wantStore", str);
+        mapsFragment.setArguments(bundle);
         return mapsFragment;
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -184,7 +187,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
 
             LatLng latLng = new LatLng(Double.valueOf(voiceGhostInfo.lattude), Double.valueOf(voiceGhostInfo.longitude));
-            mCustomMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(voiceGhostInfo.title).icon(BitmapDescriptorFactory.fromBitmap(reSizeIcon(R.drawable.google_director))));
+            mCustomMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(voiceGhostInfo.title).icon(BitmapDescriptorFactory.fromBitmap(reSizeIcon(R.drawable.google_indicate))));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             moveMap(latLng);
         }

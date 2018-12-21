@@ -25,10 +25,14 @@ public class UserFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManger;
 
+
+    //    If Android decides to recreate your Fragment later,
+    //    it's going to call the no-argument constructor of your fragment.
+    //    So overloading the constructor is not a solution.
     public static UserFragment newInstance(String str){
         UserFragment userFragment=new UserFragment();
         Bundle bundle=new Bundle();
-        bundle.putString("test",str);
+        bundle.putString("wantStore",str);
         userFragment.setArguments(bundle);
         return  userFragment;
     }

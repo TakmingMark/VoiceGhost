@@ -12,7 +12,7 @@ public class SoundPlayer {
     private String mFilePathAndName = null;
 
     private MediaPlayer mMediaPlayer;
-    private SoundPlayerCallback mSoundPlayerCallback;
+    private Callback mCallback;
 
     public SoundPlayer(Context context){
         mContext=context;
@@ -29,7 +29,7 @@ public class SoundPlayer {
             @Override
             public void onCompletion(MediaPlayer mp) {
                stopPlaying();
-                mSoundPlayerCallback.playerCompletion();
+                mCallback.playerCompletion();
             }
         });
     }
@@ -38,8 +38,8 @@ public class SoundPlayer {
         mFilePathAndName=filePathAndName;
     }
 
-    public void setSoundPlayerCallback(SoundPlayerCallback soundPlayerCallback){
-        mSoundPlayerCallback=soundPlayerCallback;
+    public void setCallback(Callback callback){
+        mCallback=callback;
     }
 
     public void onPlay(boolean isStart){
@@ -69,7 +69,7 @@ public class SoundPlayer {
         mMediaPlayer=null;
     }
 
-    public interface SoundPlayerCallback{
+    public interface Callback{
         void playerCompletion();
     }
 }
