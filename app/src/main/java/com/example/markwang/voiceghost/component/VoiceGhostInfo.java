@@ -11,13 +11,13 @@ public class VoiceGhostInfo {
     public String expireAt;
     public String readOnce;
     public String title;
-    public String voiceAddress;
+    public String voiceFileName;
 
     public VoiceGhostInfo(){
 
     }
 
-    public VoiceGhostInfo(String creator, String recipient, String lattude, String longitude, String triggerRange, String createAt, String expireAt, String readOnce, String title, String voiceAddress) {
+    public VoiceGhostInfo(String creator, String recipient, String lattude, String longitude, String triggerRange, String createAt, String expireAt, String readOnce, String title, String voiceFileName) {
         this.creator = creator;
         this.recipient = recipient;
         this.lattude = lattude;
@@ -27,12 +27,12 @@ public class VoiceGhostInfo {
         this.expireAt = expireAt;
         this.readOnce = readOnce;
         this.title = title;
-        this.voiceAddress = voiceAddress;
+        this.voiceFileName = voiceFileName;
     }
 
     public String print(){
         String log="mCreator:"+creator+"mRecipient:"+recipient+"mLattude:"+lattude+"mLongitude"+longitude+
-                "mTriggerRange:"+ triggerRange +"createAt:"+createAt+"expireAt:"+expireAt+"readOnce:"+readOnce+"mTitle:"+title +"voiceAddress"+voiceAddress;
+                "mTriggerRange:"+ triggerRange +"createAt:"+createAt+"expireAt:"+expireAt+"readOnce:"+readOnce+"mTitle:"+title +"voiceFileName:"+voiceFileName;
         return  log;
     }
 

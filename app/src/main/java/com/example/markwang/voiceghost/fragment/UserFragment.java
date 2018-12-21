@@ -63,8 +63,8 @@ public class UserFragment extends Fragment {
         for(int i=0;i<0;i++){
             VoiceGhostInfo voiceGhostInfo=new VoiceGhostInfo();
             voiceGhostInfo.creator="Mark";
-            voiceGhostInfo.lattude="123232222222222223222222222222322222222222222222222222";
-            voiceGhostInfo.longitude="456";
+            voiceGhostInfo.lattude="25.043066964818927";
+            voiceGhostInfo.longitude="121.5646205842495";
             voiceGhostInfo.triggerRange ="10";
             voiceGhostInfo.recipient="12";
             voiceGhostInfo.title="how are you?";

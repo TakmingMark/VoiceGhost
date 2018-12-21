@@ -3,6 +3,9 @@ package com.example.markwang.voiceghost.fragment;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.markwang.voiceghost.R;
+import com.example.markwang.voiceghost.component.SoundPositionManager;
+import com.example.markwang.voiceghost.component.VoiceGhostInfo;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -25,20 +30,24 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 
-public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks {
+
+public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,SoundPositionManager.Callback {
 
     private final String TAG = "MapsFragment";
     SupportMapFragment mapFragment;
     private Context mContext;
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
-    Marker mLocationMarker;
+    Marker mUserMarker;
+    Marker mCustomMarker;
     Location mLastLocation;
     LocationRequest mLocationRequest;
     FusedLocationProviderClient mFusedLocationProviderClient;
@@ -51,11 +60,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             if (locationResult == null)
                 return;
             for (Location location : locationResult.getLocations()) {
-                if (mLocationMarker != null)
-                    mLocationMarker.remove();
+                if (mUserMarker != null)
+                    mUserMarker.remove();
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                mLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Marker in Sydney"));
+                mUserMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Mark in Taiwan"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                moveMap(latLng);
             }
         }
     };
@@ -84,15 +94,22 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     private void initLoyout(View contentView) {
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        //callback onMapReady;
         mapFragment.getMapAsync(this);
     }
 
 
     protected synchronized void buildGoogleApiClient() {
         Log.d(TAG, "buildGoogleApiClient");
+        // Use the GoogleApiClient.Builder class to create an instance of the
+        // Google Play Services API client//
         mGoogleApiClient = new GoogleApiClient.Builder(mContext).addConnectionCallbacks(this).addApi(LocationServices.API).build();
-        //callback onConnected();
+
+        // Connect to Google Play Services, by calling the connect() method//
+        //callback onConnected;
         mGoogleApiClient.connect();
+        initMapLinster();
+
     }
 
     private void moveMap(LatLng place) {
@@ -101,6 +118,24 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
 
+    private void initMapLinster(){
+        SoundPositionManager.getInstance().setCallback(this);
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                Log.d(TAG,"Map clicked:["+latLng.latitude+"/"+latLng.longitude+"]");
+            }
+        });
+    }
+
+    private Bitmap reSizeIcon(int icon){
+        int height = 50;
+        int width = 50;
+        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(icon);
+        Bitmap b=bitmapdraw.getBitmap();
+        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+        return  smallMarker;
+    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -128,12 +163,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         mLocationRequest.setFastestInterval(500);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext);
+
         if (ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 || ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
             //if GPS update position, will be callback mLocationCallback
             mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
-
         }
     }
 
@@ -142,4 +176,17 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     }
 
+    @Override
+    public void onDataUpdate(ArrayList<VoiceGhostInfo> voiceGhostInfoArrayList) {
+        for (VoiceGhostInfo voiceGhostInfo : voiceGhostInfoArrayList) {
+            if (mCustomMarker != null)
+                mCustomMarker.remove();
+
+
+            LatLng latLng = new LatLng(Double.valueOf(voiceGhostInfo.lattude), Double.valueOf(voiceGhostInfo.longitude));
+            mCustomMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(voiceGhostInfo.title).icon(BitmapDescriptorFactory.fromBitmap(reSizeIcon(R.drawable.google_director))));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            moveMap(latLng);
+        }
+    }
 }

@@ -16,6 +16,8 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.example.markwang.voiceghost.component.FirebaseManager;
+import com.example.markwang.voiceghost.component.SoundPositionManager;
 import com.example.markwang.voiceghost.fragment.CustomFragment;
 import com.example.markwang.voiceghost.fragment.MapsFragment;
 import com.example.markwang.voiceghost.fragment.UserFragment;
@@ -82,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
         mCustomFragment = CustomFragment.newInstance("test");
         mUserFragment = UserFragment.newInstance("test");
         mMapsFragment = MapsFragment.newInstance();
+
+        FirebaseManager.getInstance().initilized();
+        SoundPositionManager.getInstance().initilized();
     }
 
     private void initFragment(Bundle savedInstanceState) {

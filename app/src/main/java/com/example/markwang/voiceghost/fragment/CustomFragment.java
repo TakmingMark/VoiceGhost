@@ -12,28 +12,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.markwang.voiceghost.R;
 import com.example.markwang.voiceghost.component.FirebaseManager;
+import com.example.markwang.voiceghost.component.SoundPositionManager;
 import com.example.markwang.voiceghost.component.VoiceGhostInfo;
 import com.example.markwang.voiceghost.sound.SoundPlayer;
 import com.example.markwang.voiceghost.sound.SoundRecord;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
-public class CustomFragment extends Fragment implements SoundPlayer.SoundPlayerCallback {
+public class CustomFragment extends Fragment implements SoundPlayer.SoundPlayerCallback,FirebaseManager.Callback{
     private final String TAG = "CustomFragment";
     private Context mContext;
     private EditText customName;
@@ -44,7 +35,11 @@ public class CustomFragment extends Fragment implements SoundPlayer.SoundPlayerC
     private EditText customTitle;
     private Button recordAudio;
     private Button playAudio;
-    private Button updateData;
+    private Button uploadData;
+    private Button clearCustomText;
+    private Button clearState;
+    private TextView audioState;
+    private TextView uploadState;
 
     private SimpleDateFormat mSimpleDateFormat;
     private SoundRecord mSoundRecord;
@@ -66,15 +61,19 @@ public class CustomFragment extends Fragment implements SoundPlayer.SoundPlayerC
     }
 
     private void initLayout(View contentView) {
-        customName = contentView.findViewById(R.id.customNameET);
-        customLattude = contentView.findViewById(R.id.customLattudeET);
-        customLongitude = contentView.findViewById(R.id.customLongitudeET);
-        customTriggerRange = contentView.findViewById(R.id.customTriggerRangeET);
-        customRecipient = contentView.findViewById(R.id.customRecipientET);
-        customTitle = contentView.findViewById(R.id.customTitleET);
-        recordAudio = contentView.findViewById(R.id.recordAudioBT);
-        playAudio = contentView.findViewById(R.id.playAudioBT);
-        updateData = contentView.findViewById(R.id.updateDataBT);
+        customName = contentView.findViewById(R.id.customName);
+        customLattude = contentView.findViewById(R.id.customLattude);
+        customLongitude = contentView.findViewById(R.id.customLongitude);
+        customTriggerRange = contentView.findViewById(R.id.customTriggerRange);
+        customRecipient = contentView.findViewById(R.id.customRecipient);
+        customTitle = contentView.findViewById(R.id.customTitle);
+        recordAudio = contentView.findViewById(R.id.recordAudio);
+        playAudio = contentView.findViewById(R.id.playAudio);
+        uploadData = contentView.findViewById(R.id.uploadData);
+        clearCustomText=contentView.findViewById(R.id.clearCustomText);
+        clearState=contentView.findViewById(R.id.clearState);
+        audioState=contentView.findViewById(R.id.audioState);
+        uploadState=contentView.findViewById(R.id.uploadState);
     }
 
     private void initObject() {
@@ -83,6 +82,7 @@ public class CustomFragment extends Fragment implements SoundPlayer.SoundPlayerC
         mSoundPlayer = new SoundPlayer(mContext);
         mSoundPlayer.setSoundPlayerCallback(this);
 
+        FirebaseManager.getInstance().setCallback(this);
         mFilePath = mContext.getExternalCacheDir().getAbsolutePath();
     }
 
@@ -97,8 +97,10 @@ public class CustomFragment extends Fragment implements SoundPlayer.SoundPlayerC
                     mSoundRecord.setFilePathAndName(mFilePath + "/" + mFileName);
                     Log.d(TAG, mFileName);
                     recordAudio.setText("Stop");
+
                 } else {
                     recordAudio.setText("Record");
+                    audioState.setText("true");
                 }
                 mSoundRecord.onRecord(isRecording);
             }
@@ -119,7 +121,7 @@ public class CustomFragment extends Fragment implements SoundPlayer.SoundPlayerC
             }
         });
 
-        updateData.setOnClickListener(new View.OnClickListener() {
+        uploadData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 VoiceGhostInfo voiceGhostInfo=new VoiceGhostInfo();
@@ -127,47 +129,48 @@ public class CustomFragment extends Fragment implements SoundPlayer.SoundPlayerC
                 voiceGhostInfo.lattude=customLattude.getText().toString();
                 voiceGhostInfo.longitude=customLongitude.getText().toString();
                 voiceGhostInfo.triggerRange=customTriggerRange.getText().toString();
+                voiceGhostInfo.recipient=customRecipient.getText().toString();
+                voiceGhostInfo.title = customTitle.getText().toString();
+
                 voiceGhostInfo.createAt=mSimpleDateFormat.format(new Date());
                 voiceGhostInfo.expireAt = "00-00-02-00-00";
                 voiceGhostInfo.readOnce = "true";
-                voiceGhostInfo.title = "Hello world";
+                voiceGhostInfo.voiceFileName=mFileName;
+
                 FirebaseManager.getInstance().databaseInsert(voiceGhostInfo);
                 FirebaseManager.getInstance().uploadFile(mFilePath+"/"+mFileName);
             }
         });
 
+        clearCustomText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customName.setText("");
+                customLattude.setText("");
+                customLongitude.setText("");
+                customTriggerRange.setText("");
+                customRecipient.setText("");
+                customTitle.setText("");
 
+            }
+        });
+
+        clearState.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                audioState.setText("False");
+                uploadState.setText("False");
+            }
+        });
     }
 
     private void defaultValue() {
         customName.setText("Mark");
-        customLattude.setText("123");
-        customLongitude.setText("456");
+        customLattude.setText("25.043066964818927");
+        customLongitude.setText("121.5646205842495");
         customTriggerRange.setText("10");
         customRecipient.setText("Andy");
         customTitle.setText("How are you?");
-    }
-
-
-    private void FirebaseUploadFile() {
-        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance("gs://voiceghost-38502.appspot.com");
-        StorageReference storageReference = firebaseStorage.getReference();
-
-        Uri file = Uri.fromFile(new File(mFilePath + "/" + mFileName));
-        StorageReference oriiRef = storageReference.child("orii/" + file.getLastPathSegment());
-
-        UploadTask uploadTask = oriiRef.putFile(file);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.d(TAG, "uploadTask is onFailure");
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Log.d(TAG, "uploadTask is onSuccess");
-            }
-        });
     }
 
     @Override
@@ -195,7 +198,6 @@ public class CustomFragment extends Fragment implements SoundPlayer.SoundPlayerC
 
     @Override
     public void playerCompletion() {
-
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -203,5 +205,20 @@ public class CustomFragment extends Fragment implements SoundPlayer.SoundPlayerC
                 isPlaying = !isPlaying;
             }
         });
+    }
+
+    @Override
+    public void onUploadFileSuccess() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                uploadState.setText("true");
+            }
+        });
+    }
+
+    @Override
+    public void onDataInsertSuccess(ArrayList<VoiceGhostInfo> voiceGhostInfoArrayList) {
+        SoundPositionManager.getInstance().putVoiceGhost(voiceGhostInfoArrayList);
     }
 }

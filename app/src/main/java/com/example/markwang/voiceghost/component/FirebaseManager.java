@@ -16,23 +16,28 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class FirebaseManager {
     private final String TAG="FirebaseManager";
     private final static FirebaseManager mFirebaseManager = new FirebaseManager();
     FirebaseStorage mFirebaseStorage;
     StorageReference mStorageReference;
+    private Callback mCallback;
 
     public static FirebaseManager getInstance() {
         return mFirebaseManager;
     }
 
-    private FirebaseManager() {
+    public void initilized() {
         mFirebaseStorage = FirebaseStorage.getInstance("gs://voiceghost-38502.appspot.com");
         mStorageReference = mFirebaseStorage.getReference();
     }
 
-    public void databaseInsert( VoiceGhostInfo voiceGhostInfo) {
+    public void setCallback(Callback callback){
+        mCallback=callback;
+
+    }    public void databaseInsert( VoiceGhostInfo voiceGhostInfo) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("orii").child("audio");
         myRef.push().setValue(voiceGhostInfo);//push is random unique ID
@@ -44,17 +49,20 @@ public class FirebaseManager {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
+                ArrayList<VoiceGhostInfo> voiceGhostInfoArrayList=new ArrayList<>();
                 Log.d(TAG,"dataSnapshot size:"+dataSnapshot.getChildrenCount());
                 for(DataSnapshot postSnapshot:dataSnapshot.getChildren()){
                     VoiceGhostInfo value = postSnapshot.getValue(VoiceGhostInfo.class);
                     Log.d(TAG, value.print());
+                    voiceGhostInfoArrayList.add(value);
                 }
+                mCallback.onDataInsertSuccess(voiceGhostInfoArrayList);
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
+                Log.d(TAG, "Failed to read value.", error.toException());
             }
         });
 
@@ -73,8 +81,15 @@ public class FirebaseManager {
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                mCallback.onUploadFileSuccess();
                 Log.d(TAG, "uploadTask is onSuccess");
             }
         });
     }
+
+    public interface Callback{
+        void onUploadFileSuccess();
+        void onDataInsertSuccess(ArrayList<VoiceGhostInfo> voiceGhostInfoArrayList);
+    }
+
 }

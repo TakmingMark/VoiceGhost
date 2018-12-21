@@ -8,7 +8,6 @@
 
 
     <TextView
-        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Custom"
@@ -21,14 +20,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/customName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name:"
             android:textSize="16sp" />
 
         <EditText
-            android:id="@+id/customNameET"
+            android:id="@+id/customName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="8"
@@ -41,14 +39,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/customLattude"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lattude:"
             android:textSize="16sp" />
 
         <EditText
-            android:id="@+id/customLattudeET"
+            android:id="@+id/customLattude"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="8"
@@ -62,7 +59,6 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/customLongitude"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -70,7 +66,7 @@
             android:textSize="16sp" />
 
         <EditText
-            android:id="@+id/customLongitudeET"
+            android:id="@+id/customLongitude"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="8"
@@ -85,14 +81,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/customTriggerRange"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Trigger range:"
             android:textSize="16sp" />
 
         <EditText
-            android:id="@+id/customTriggerRangeET"
+            android:id="@+id/customTriggerRange"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="8"
@@ -105,14 +100,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/customRecipient"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Recipient:"
             android:textSize="16sp" />
 
         <EditText
-            android:id="@+id/customRecipientET"
+            android:id="@+id/customRecipient"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="8"
@@ -125,14 +119,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/customTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Title:"
             android:textSize="16sp" />
 
         <EditText
-            android:id="@+id/customTitleET"
+            android:id="@+id/customTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="8"
@@ -145,7 +138,6 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/audioText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Audio prepare state:"
@@ -159,16 +151,17 @@
             android:textSize="16sp" />
 
         <Button
-            android:id="@+id/recordAudioBT"
+            android:id="@+id/recordAudio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
             android:text="record" />
 
         <Button
-            android:id="@+id/playAudioBT"
+            android:id="@+id/playAudio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAllCaps="false"
             android:text="play" />
     </LinearLayout>
 
@@ -178,25 +171,24 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/updateData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Update data state:"
+            android:text="Upload data state:"
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/updateState"
+            android:id="@+id/uploadState"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="false"
             android:textSize="16sp" />
 
         <Button
-            android:id="@+id/updateDataBT"
+            android:id="@+id/uploadData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
-            android:text="Update" />
+            android:text="Upload" />
     </LinearLayout>
 
     <LinearLayout
@@ -204,13 +196,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <Button
-            android:id="@+id/clearEditTextBT"
+            android:id="@+id/clearCustomText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
             android:text="ClearText" />
         <Button
-            android:id="@+id/clearStateBT"
+            android:id="@+id/clearState"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
