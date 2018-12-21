@@ -29,6 +29,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -38,19 +39,19 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 
 
-public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,SoundPositionManager.Callback {
+public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, SoundPositionManager.Callback {
 
     private final String TAG = "MapsFragment";
-    SupportMapFragment mapFragment;
+    private SupportMapFragment mGoogleMapFragment;
     private Context mContext;
-    private GoogleMap mMap;
+    private GoogleMap mGoogleMap;
     private GoogleApiClient mGoogleApiClient;
-    Marker mUserMarker;
-    Marker mCustomMarker;
-    Location mLastLocation;
-    LocationRequest mLocationRequest;
-    FusedLocationProviderClient mFusedLocationProviderClient;
+    private Marker mUserMarker;
+    private Marker mCustomMarker;
+    private LocationRequest mLocationRequest;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
 
+    private boolean isFirstLocation=false;
 
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -61,10 +62,17 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
             for (Location location : locationResult.getLocations()) {
                 if (mUserMarker != null)
                     mUserMarker.remove();
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                mUserMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Mark in Taiwan"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                moveMap(latLng);
+                VoiceGhostInfo voiceGhostInfo = new VoiceGhostInfo();
+                voiceGhostInfo.lattude = location.getLatitude() + "";
+                voiceGhostInfo.longitude = location.getLongitude() + "";
+                voiceGhostInfo.title = "Mark in Taiwan";
+                mUserMarker = setMark(voiceGhostInfo, R.drawable.user_indicate);
+
+                if(!isFirstLocation){
+                    isFirstLocation=!isFirstLocation;
+                    LatLng latLng=new LatLng(location.getLatitude(),location.getLongitude());
+                    moveMap(latLng);
+                }
             }
         }
     };
@@ -81,8 +89,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onAttach(Context context) {
         Log.d(TAG, "onAttach");
-        super.onAttach(context);
         mContext = context;
+        super.onAttach(context);
     }
 
     @Nullable
@@ -96,9 +104,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     }
 
     private void initLoyout(View contentView) {
-        mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mGoogleMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         //callback onMapReady;
-        mapFragment.getMapAsync(this);
+        mGoogleMapFragment.getMapAsync(this);
     }
 
 
@@ -111,34 +119,47 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         // Connect to Google Play Services, by calling the connect() method//
         //callback onConnected;
         mGoogleApiClient.connect();
-        initMapLinster();
+        initGoogleMapListener();
 
     }
 
     private void moveMap(LatLng place) {
         CameraPosition cameraPosition = new CameraPosition.Builder().target(place).zoom(17).build();
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
 
-    private void initMapLinster(){
+    private void initGoogleMapListener() {
         SoundPositionManager.getInstance().setCallback(this);
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                Log.d(TAG,"Map clicked:["+latLng.latitude+"/"+latLng.longitude+"]");
+                Log.d(TAG, "Map clicked:[" + latLng.latitude + "/" + latLng.longitude + "]");
             }
         });
     }
 
-    private Bitmap reSizeIcon(int icon){
+    private Bitmap reSizeIcon(int icon) {
         int height = 50;
         int width = 50;
-        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(icon);
-        Bitmap b=bitmapdraw.getBitmap();
+        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(icon);
+        Bitmap b = bitmapdraw.getBitmap();
         Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-        return  smallMarker;
+        return smallMarker;
     }
+
+    private Marker setMark(VoiceGhostInfo voiceGhostInfo, int icon) {
+        Marker marker;
+        double lat = Double.valueOf(voiceGhostInfo.lattude);
+        double lng = Double.valueOf(voiceGhostInfo.longitude);
+        LatLng latLng = new LatLng(lat, lng);
+
+        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(reSizeIcon(icon));
+        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(voiceGhostInfo.title).icon(bitmapDescriptor);
+        marker = mGoogleMap.addMarker(markerOptions);
+        return marker;
+    }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -151,8 +172,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG, "onMapReady");
-        mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mGoogleMap = googleMap;
+        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         buildGoogleApiClient();
 
@@ -181,15 +202,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
     @Override
     public void onDataUpdate(ArrayList<VoiceGhostInfo> voiceGhostInfoArrayList) {
+        if (mCustomMarker != null)
+            mCustomMarker.remove();
         for (VoiceGhostInfo voiceGhostInfo : voiceGhostInfoArrayList) {
-            if (mCustomMarker != null)
-                mCustomMarker.remove();
-
-
-            LatLng latLng = new LatLng(Double.valueOf(voiceGhostInfo.lattude), Double.valueOf(voiceGhostInfo.longitude));
-            mCustomMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(voiceGhostInfo.title).icon(BitmapDescriptorFactory.fromBitmap(reSizeIcon(R.drawable.google_indicate))));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            moveMap(latLng);
+            mCustomMarker = setMark(voiceGhostInfo, R.drawable.custom_indicate);
         }
     }
 }

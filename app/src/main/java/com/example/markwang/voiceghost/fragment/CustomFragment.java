@@ -20,11 +20,12 @@ import com.example.markwang.voiceghost.component.SoundPositionManager;
 import com.example.markwang.voiceghost.component.VoiceGhostInfo;
 import com.example.markwang.voiceghost.sound.SoundPlayer;
 import com.example.markwang.voiceghost.sound.SoundRecord;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class CustomFragment extends Fragment implements SoundPlayer.Callback,FirebaseManager.Callback{
+public class CustomFragment extends Fragment implements SoundPlayer.Callback, FirebaseManager.Callback {
     private final String TAG = "CustomFragment";
     private Context mContext;
     private EditText customName;
@@ -51,7 +52,7 @@ public class CustomFragment extends Fragment implements SoundPlayer.Callback,Fir
     private String mFilePath;
     private String mFileName;
 
-//    If Android decides to recreate your Fragment later,
+    //    If Android decides to recreate your Fragment later,
 //    it's going to call the no-argument constructor of your fragment.
 //    So overloading the constructor is not a solution.
     public static CustomFragment newInstance(String str) {
@@ -72,10 +73,10 @@ public class CustomFragment extends Fragment implements SoundPlayer.Callback,Fir
         recordAudio = contentView.findViewById(R.id.recordAudio);
         playAudio = contentView.findViewById(R.id.playAudio);
         uploadData = contentView.findViewById(R.id.uploadData);
-        clearCustomText=contentView.findViewById(R.id.clearCustomText);
-        clearState=contentView.findViewById(R.id.clearState);
-        audioState=contentView.findViewById(R.id.audioState);
-        uploadState=contentView.findViewById(R.id.uploadState);
+        clearCustomText = contentView.findViewById(R.id.clearCustomText);
+        clearState = contentView.findViewById(R.id.clearState);
+        audioState = contentView.findViewById(R.id.audioState);
+        uploadState = contentView.findViewById(R.id.uploadState);
     }
 
     private void initObject() {
@@ -97,9 +98,7 @@ public class CustomFragment extends Fragment implements SoundPlayer.Callback,Fir
                 if (isRecording) {
                     mFileName = mSimpleDateFormat.format(new Date()) + ".3gp";
                     mSoundRecord.setFilePathAndName(mFilePath + "/" + mFileName);
-                    Log.d(TAG, mFileName);
                     recordAudio.setText("Stop");
-
                 } else {
                     recordAudio.setText("Record");
                     audioState.setText("true");
@@ -126,21 +125,21 @@ public class CustomFragment extends Fragment implements SoundPlayer.Callback,Fir
         uploadData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                VoiceGhostInfo voiceGhostInfo=new VoiceGhostInfo();
-                voiceGhostInfo.creator =customName.getText().toString();
-                voiceGhostInfo.lattude=customLattude.getText().toString();
-                voiceGhostInfo.longitude=customLongitude.getText().toString();
-                voiceGhostInfo.triggerRange=customTriggerRange.getText().toString();
-                voiceGhostInfo.recipient=customRecipient.getText().toString();
+                VoiceGhostInfo voiceGhostInfo = new VoiceGhostInfo();
+                voiceGhostInfo.creator = customName.getText().toString();
+                voiceGhostInfo.lattude = customLattude.getText().toString();
+                voiceGhostInfo.longitude = customLongitude.getText().toString();
+                voiceGhostInfo.triggerRange = customTriggerRange.getText().toString();
+                voiceGhostInfo.recipient = customRecipient.getText().toString();
                 voiceGhostInfo.title = customTitle.getText().toString();
 
-                voiceGhostInfo.createAt=mSimpleDateFormat.format(new Date());
+                voiceGhostInfo.createAt = mSimpleDateFormat.format(new Date());
                 voiceGhostInfo.expireAt = "00-00-02-00-00";
                 voiceGhostInfo.readOnce = "true";
-                voiceGhostInfo.voiceFileName=mFileName;
+                voiceGhostInfo.voiceFileName = mFileName;
 
                 FirebaseManager.getInstance().databaseInsert(voiceGhostInfo);
-                FirebaseManager.getInstance().uploadFile(mFilePath+"/"+mFileName);
+                FirebaseManager.getInstance().uploadFile(mFilePath + "/" + mFileName);
             }
         });
 
