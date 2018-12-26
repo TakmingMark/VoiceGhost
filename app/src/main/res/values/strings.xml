@@ -2,7 +2,13 @@
     <string name="app_name">VoiceGhost</string>
     <string name="title_activity_maps">Map</string>
 
+    <!-- Main activity-->
     <string name="custom">custom</string>
     <string name="user">User</string>
     <string name="map">Map</string>
+
+    <!-- Dialog -->
+    <string name="dialog_name">Trigger Point:%1$f</string>
+    <string name="dialog_content"></string>
+    <string name="dialog_positive">ok</string>
 </resources>

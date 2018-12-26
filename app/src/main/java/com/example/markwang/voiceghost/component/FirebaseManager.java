@@ -2,10 +2,12 @@ package com.example.markwang.voiceghost.component;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,40 +20,50 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.util.ArrayList;
 
-public class FirebaseManager extends BaseManager{
-    private final String TAG="FirebaseManager";
-    private static FirebaseManager mFirebaseManager = new FirebaseManager();
-    FirebaseStorage mFirebaseStorage;
-    StorageReference mStorageReference;
+public class FirebaseManager extends BaseManager {
+    private final String TAG = "FirebaseManager";
+    private static FirebaseManager mInstance = new FirebaseManager();
+    private FirebaseStorage mFirebaseStorage;
+    private StorageReference mStorageReference;
+
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mDatabaseReference;
+
     private Callback mCallback;
 
     public static FirebaseManager getInstance() {
-        return mFirebaseManager;
+        if (mInstance == null)
+            mInstance = new FirebaseManager();
+        return mInstance;
     }
 
-    public void initilized() {
+    public void initialized() {
         mFirebaseStorage = FirebaseStorage.getInstance("gs://voiceghost-38502.appspot.com");
         mStorageReference = mFirebaseStorage.getReference();
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mFirebaseDatabase.setPersistenceEnabled(true);
+        mDatabaseReference = mFirebaseDatabase.getReference("orii").child("audio");
+        setDatabaseEventListener();
+        mDatabaseReference.keepSynced(true);
     }
 
-    public void setCallback(Callback callback){
-        mCallback=callback;
+    public void setCallback(Callback callback) {
+        mCallback = callback;
 
-    }    public void databaseInsert( VoiceGhostInfo voiceGhostInfo) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("orii").child("audio");
-        myRef.push().setValue(voiceGhostInfo);//push is random unique ID
+    }
 
+    private void setDatabaseEventListener() {
         //read from firebase when firebase data change,
         //reference https://stackoverflow.com/questions/32886546/how-to-get-all-child-list-from-firebase-android
-        myRef.addValueEventListener(new ValueEventListener() {
+        mDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                ArrayList<VoiceGhostInfo> voiceGhostInfoArrayList=new ArrayList<>();
-                Log.d(TAG,"dataSnapshot size:"+dataSnapshot.getChildrenCount());
-                for(DataSnapshot postSnapshot:dataSnapshot.getChildren()){
+                ArrayList<VoiceGhostInfo> voiceGhostInfoArrayList = new ArrayList<>();
+                Log.d(TAG, "dataSnapshot size:" + dataSnapshot.getChildrenCount());
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     VoiceGhostInfo value = postSnapshot.getValue(VoiceGhostInfo.class);
                     Log.d(TAG, value.print());
                     voiceGhostInfoArrayList.add(value);
@@ -65,7 +77,10 @@ public class FirebaseManager extends BaseManager{
                 Log.d(TAG, "Failed to read value.", error.toException());
             }
         });
+    }
 
+    public void databaseInsert(VoiceGhostInfo voiceGhostInfo) {
+        mDatabaseReference.push().setValue(voiceGhostInfo);//push is random unique ID
     }
 
     public void uploadFile(String filePathAndName) {
@@ -89,11 +104,12 @@ public class FirebaseManager extends BaseManager{
 
     @Override
     public void onDestory() {
-        mFirebaseManager=null;
+        mInstance = null;
     }
 
-    public interface Callback{
+    public interface Callback {
         void onUploadFileSuccess();
+
         void onDataInsertSuccess(ArrayList<VoiceGhostInfo> voiceGhostInfoArrayList);
     }
 

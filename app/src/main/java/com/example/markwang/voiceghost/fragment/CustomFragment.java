@@ -20,6 +20,7 @@ import com.example.markwang.voiceghost.component.SoundPositionManager;
 import com.example.markwang.voiceghost.component.VoiceGhostInfo;
 import com.example.markwang.voiceghost.sound.SoundPlayer;
 import com.example.markwang.voiceghost.sound.SoundRecord;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -172,6 +173,11 @@ public class CustomFragment extends Fragment implements SoundPlayer.Callback, Fi
         customTriggerRange.setText("10");
         customRecipient.setText("Andy");
         customTitle.setText("How are you?");
+    }
+
+    public void setLatLngFromGoogleMapTouch(LatLng latLng){
+        customLattude.setText(latLng.latitude+"");
+        customLongitude.setText(latLng.longitude+"");
     }
 
     @Override

@@ -8,34 +8,34 @@ import android.util.Log;
 import java.io.IOException;
 
 public class SoundRecord {
-    private final String TAG="SoundRecord";
+    private final String TAG = "SoundRecord";
     private Context mContext;
     private String mFilePathAndName = null;
     private MediaRecorder mMediaRecorder;
 
 
-    public SoundRecord(Context context){
-        mContext=context;
+    public SoundRecord(Context context) {
+        mContext = context;
         initilized();
     }
 
-    private void initilized(){
+    private void initilized() {
 
     }
 
-    public void setFilePathAndName(String filePathAndName){
-        mFilePathAndName=filePathAndName;
+    public void setFilePathAndName(String filePathAndName) {
+        mFilePathAndName = filePathAndName;
     }
 
     public void onRecord(boolean isStart) {
-        if(isStart)
+        if (isStart)
             startRecording();
         else
             stopRecording();
     }
 
-    private void startRecording(){
-        mMediaRecorder=new MediaRecorder();//maybe move to initlized
+    private void startRecording() {
+        mMediaRecorder = new MediaRecorder();//maybe move to initialized
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mMediaRecorder.setOutputFile(mFilePathAndName);

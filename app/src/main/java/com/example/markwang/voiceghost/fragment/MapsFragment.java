@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.telecom.Call;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,8 +51,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private Marker mCustomMarker;
     private LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationProviderClient;
+    private Callback mCallback;
 
-    private boolean isFirstLocation=false;
+    private boolean isFirstLocation = false;
+    private boolean isAlreadyTrigger=false;
 
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -67,12 +70,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 voiceGhostInfo.longitude = location.getLongitude() + "";
                 voiceGhostInfo.title = "Mark in Taiwan";
                 mUserMarker = setMark(voiceGhostInfo, R.drawable.user_indicate);
-
-                if(!isFirstLocation){
-                    isFirstLocation=!isFirstLocation;
-                    LatLng latLng=new LatLng(location.getLatitude(),location.getLongitude());
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                if (!isFirstLocation) {
+                    isFirstLocation = !isFirstLocation;
                     moveMap(latLng);
                 }
+                if(isAlreadyTrigger)
+                    mCallback.onUserMove(latLng);
             }
         }
     };
@@ -99,8 +103,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         Log.d(TAG, "onCreateView");
         View contentView = inflater.inflate(R.layout.activity_maps, null);
         initLoyout(contentView);
-
+        initPositionManagerListener();
         return contentView;
+    }
+
+    public void setCallback(Callback callback) {
+        mCallback = callback;
     }
 
     private void initLoyout(View contentView) {
@@ -128,12 +136,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
+    private void initPositionManagerListener() {
+        SoundPositionManager.getInstance().setCallback(this);
+    }
 
     private void initGoogleMapListener() {
-        SoundPositionManager.getInstance().setCallback(this);
         mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
+                mCallback.onTouchMap(latLng);
                 Log.d(TAG, "Map clicked:[" + latLng.latitude + "/" + latLng.longitude + "]");
             }
         });
@@ -176,7 +187,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         buildGoogleApiClient();
-
+        mCallback.onMapAlready();
     }
 
     @Override
@@ -207,5 +218,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         for (VoiceGhostInfo voiceGhostInfo : voiceGhostInfoArrayList) {
             mCustomMarker = setMark(voiceGhostInfo, R.drawable.custom_indicate);
         }
+
+        isAlreadyTrigger=true;
+    }
+
+    public interface Callback {
+        void onMapAlready();
+        void onTouchMap(LatLng latLng);
+        void onUserMove(LatLng latLng);
     }
 }
